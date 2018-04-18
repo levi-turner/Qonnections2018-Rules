@@ -2,6 +2,17 @@
 
 This repository will include all the example rules used in the presentation from Qonnections 2018 titled Extending the Power of Qlik Sense with Rules. It will also include references to sources for more information regarding rules in Qlik Sense.
 
+__Table of Contents__:
+
+- [Rules](#rules)
+  - [Pre-prepared rules](#pre-prepared-rules)
+  - [Front-end rules](#front-end-rules)
+  - [Backend rules](#back-end-rules)
+  - [Adjusted / New Rules](#adjusted---new-rules)
+- [Relevant documentation on Rules](#relevant-documentation-on-rules)
+- [Example Security rule frameworks](#example-security-rule-frameworks)
+
+
 # Rules
 
 These rules will be listed in the following format:
@@ -18,6 +29,7 @@ At the outset, we have disabled the following default rules:
 - `CreateAppObjectsPublishedApp`
 
 ## Pre-prepared rules:
+### Front end rules
 - Q-Stream-Development
   - `Stream_*`
   - Read+Publish
@@ -73,6 +85,8 @@ At the outset, we have disabled the following default rules:
   - `((resource.resourcetype = "App" and resource.stream.HasPrivilege("read") and resource.@AppLevelManagement="Restricted") and (user.group="Executive" or user.role="Executive"))`
   - Both
   - This rule will provide the read rights on Apps where the app has the Restricted value applied to the app of the AppLevelManagement custom property provided that the user is either in the Executive group or has an Executive role from the configured User Directory Connector.
+
+### Backend rules
 
 - Q-QMC-Administrators
   - `*`
@@ -130,6 +144,8 @@ At the outset, we have disabled the following default rules:
   - QMC
   - This rule will allow users with the Developer role to be able to read, create, modify, delete the apps belonging to the streams which they have read rights to. Functionally this rule over-rides the AppLevelManagement custom property sub-stream level access that has been setup on the front end.
 
+### Adjusted / New Rules
+
 - Q-Stream-Matching
   - `Stream_*`
   - Read + Publish
@@ -143,7 +159,6 @@ At the outset, we have disabled the following default rules:
   - `((!resource.App.stream.Empty() and resource.App.HasPrivilege("read") and (resource.objectType = "story" or resource.objectType = "bookmark" or resource.objectType = "snapshot" or resource.objectType = "embeddedsnapshot" or resource.objectType = "hiddenbookmark") and !user.IsAnonymous()) and (user.role="Consumer"))`
   - Hub
   - This rule allows users with the Consumer role to be able to create bookmarks and stories.
-
 
 - Q-Stream-Attributes 
   - `Stream_*`
