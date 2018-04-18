@@ -2,13 +2,15 @@
 
 This repository will include all the example rules used in the presentation from Qonnections 2018 titled Extending the Power of Qlik Sense with Rules. It will also include references to sources for more information regarding rules in Qlik Sense.
 
+ > No Support or maintenance is implied or provided. Further customization is expected to be necessary and it is the responsibility of the end administrator to test and implement an appropriate rule for their specific use case.
+
 __Table of Contents__:
 
 - [Rules](#rules)
   - [Pre-prepared rules](#pre-prepared-rules)
   - [Front-end rules](#front-end-rules)
   - [Backend rules](#back-end-rules)
-  - [Adjusted / New Rules](#adjusted---new-rules)
+  - [Adjusted / New Rules](#adjusted--new-rules)
 - [Relevant documentation on Rules](#relevant-documentation-on-rules)
 - [Example Security rule frameworks](#example-security-rule-frameworks)
 
