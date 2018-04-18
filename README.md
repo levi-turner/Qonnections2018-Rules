@@ -88,53 +88,87 @@ At the outset, we have disabled the following default rules:
   - QMC
   - This rule will provide read rights to the Apps and Tasks section of the QMC provided that the user has the Developer role from the configured User Directory Connector.
 
--  Q-QMC-Developers-Tasks
+- Q-QMC-Developers-Tasks
   - `ReloadTask*`
   - Read + Update + Delete
   - `((user.role="Developer") and resource.App.HasPrivilege("read"))`
   - QMC
   - This rule will provide the rights to read, modify, or delete tasks in the QMC so long as the task is associated with apps which the user has read rights on for users who have the Developer role from the configured User Directory Connector.
 
--  Q-QMC-Developers-Tasks-Create
+- Q-QMC-Developers-Tasks-Create
   - `ReloadTask*`
   - Create
   - `(user.role="Developer")`
   - QMC
   - This rule will provide the rights to create tasks in the QMC for users who have the Developer role from the configured User Directory Connector. When the users create the task, they will only be able to create a reload task for apps which they have read rights on.
 
--  Q-QMC-Developers-Triggers
+- Q-QMC-Developers-Triggers
   - `SchemaEvent*,CompositeEvent*, ExecutionResult*`
   - Create + Read + Update + Delete
   - `(user.role="Developer")`
   - QMC
   - This rule will provide the rights to create, see, modify, remove triggers for tasks which the user already has read rights on for users who have the Developer role from the configured User Directory Connector.
 
--  Q-QMC-Developers-Apps-WithRestrictions
+- Q-QMC-Developers-Apps-WithRestrictions
   - `App*`
   - Create + Update + Delete
   - `((user.role="Developer"))`
   - QMC
   - This rule will allow users who have the Developer role to be able to create, modify, and delete apps or app objects which they already have read rights to. Functionally this will allow for publish and replace operations.
 
--  Q-QMC-Developers-Apps-WithoutRestrictions-Objects
+- Q-QMC-Developers-Apps-WithoutRestrictions-Objects
   - `App.Object_*`
-  - __TODO__
+  - Create + Read + Update + Delete
   - `((user.role="Developer") and resource.app.HasPrivilege("read"))`
   - QMC
-  - This rule will allow users with the Developer role to be able to __TODO__ to the objects belonging to apps which they have read rights on. Functionally this likewise is integral to the publish and replace operation.
+  - This rule will allow users with the Developer role to be able to read, create, modify, delete the objects belonging to apps which they have read rights on. Functionally this likewise is integral to the publish and replace operation.
 
--  Q-QMC-Developers-Apps-WithoutRestrictions-Apps
+- Q-QMC-Developers-Apps-WithoutRestrictions-Apps
   - `App_*`
-  - __TODO__
+  - Create + Read + Update + Delete
   - `((user.role="Developer") and resource.stream.HasPrivilege("read"))`
   - QMC
-  - This rule will allow users with the Developer role to be able to __TODO__ to the apps belonging to the streams which they have read rights to. Functionally this rule over-rides the AppLevelManagement custom property sub-stream level access that has been setup on the front end.
+  - This rule will allow users with the Developer role to be able to read, create, modify, delete the apps belonging to the streams which they have read rights to. Functionally this rule over-rides the AppLevelManagement custom property sub-stream level access that has been setup on the front end.
 
+- Q-Stream-Matching
+  - `Stream_*`
+  - Read + Publish
+  - `((user.group=resource.name) or (user.role=resource.name))`
+  - Both
+  - This rule is a replacement for rules `Q-Stream-Development`, `Q-Stream-Executive`, `Q-Stream-HR`, `Q-Stream-IT`, `Q-Stream-Sales` where we pattern match the group or role of the user to the stream name. It will allow read and publish rights to stream which match the user's group or role.
+
+- Q-CreateAppObjects-Consumer
+  - `App.Object_*`
+  - Create
+  - `((!resource.App.stream.Empty() and resource.App.HasPrivilege("read") and (resource.objectType = "story" or resource.objectType = "bookmark" or resource.objectType = "snapshot" or resource.objectType = "embeddedsnapshot" or resource.objectType = "hiddenbookmark") and !user.IsAnonymous()) and (user.role="Consumer"))`
+  - Hub
+  - This rule allows users with the Consumer role to be able to create bookmarks and stories.
+
+
+- Q-Stream-Attributes 
+  - `Stream_*`
+  - Read + Publish
+  - `(resource.name=user.environment.group)`
+  - Both
+  - This rule will allow us to match the user's session attributes to the name of a stream. In the demo the JSON of the ticket request is as follows:
+```json
+  {
+    "UserDirectory": "AttributesTest",
+    "UserId": "AttributeUser",
+    "Attributes": 
+    [
+      {"group": "Sales"}
+    ]
+  }
+```
+  - This `user.environment` style framework works on authentication mechanisms where session attributes can be sent. i.e. [Web Ticketing](https://help.qlik.com/en-US/sense-developer/February2018/Subsystems/ProxyServiceAPI/Content/ProxyServiceAPI/ProxyServiceAPI-ProxyServiceAPI-Authentication-Ticket-Add.htm), [SAML](https://community.qlik.com/blogs/qlikviewdesignblog/2017/01/24/userenvironmentwhat-session-attributes-in-qlik-sense)
 
 ## Relevant documentation on Rules
 - [Resource Filters](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/available-resource-filters.htm)
 - [Operators and Functions](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/operators-and-functions-for-conditions.htm)
 - [Conditions](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/available-resource-conditions.htm)
-- [Examples](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/security-rules-examples.htm)
-- [GSS Example Security Rules](https://github.com/eapowertools/iPortal/blob/master/docs/gss_setup_guide.md)
 - [Handling Exceptions](https://community.qlik.com/blogs/qlikviewdesignblog/2015/12/29/managing-qlik-sense-streams-security-rules-and-exception-management)
+
+## Example Security rule frameworks
+- [Examples](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/security-rules-examples.htm)
+- [Governed Self Service  Example Security Rules](https://github.com/eapowertools/iPortal/blob/master/docs/gss_setup_guide.md)
