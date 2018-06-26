@@ -9,8 +9,9 @@ __Table of Contents__:
 - [Rules](#rules)
   - [Pre-prepared rules](#pre-prepared-rules)
   - [Front-end rules](#front-end-rules)
-  - [Backend rules](#back-end-rules)
+  - [Backend rules](#backend-rules)
   - [Adjusted / New Rules](#adjusted--new-rules)
+  - [Load Balancing Rules](#load-balancing-rules)
 - [Relevant documentation on Rules](#relevant-documentation-on-rules)
 - [Example Security rule frameworks](#example-security-rule-frameworks)
 
@@ -179,6 +180,22 @@ At the outset, we have disabled the following default rules:
   }
 ```
   - This `user.environment` style framework works on authentication mechanisms where session attributes can be sent. i.e. [Web Ticketing](https://help.qlik.com/en-US/sense-developer/February2018/Subsystems/ProxyServiceAPI/Content/ProxyServiceAPI/ProxyServiceAPI-ProxyServiceAPI-Authentication-Ticket-Add.htm), [SAML](https://community.qlik.com/blogs/qlikviewdesignblog/2017/01/24/userenvironmentwhat-session-attributes-in-qlik-sense)
+
+### Load Balancing Rules
+- Production & Development
+  - `App_*`
+  - Load Balancing
+  - `(node.@NodeType="Production" and !resource.stream.Empty()) or (node.@NodeType="Development" and resource.stream.Empty())`
+  - Both
+  - This rule will load balance Published apps to nodes with the NodeType custom property set to Production and unbalanced apps to the nodes with the NodeType custom property set to Development.
+
+- Regular Expressions
+  - `App_*`
+  - Load Balancing
+  - `((node.name="RIM1" and (resource.id matches "[0-8]{1}[a-z0-9]{7}-([a-z0-9]{4}-){3}[a-z0-9]{12}")) or (node.name="RIM2" and (resource.id matches "[a-z9-9]{1}[a-z0-9]{7}-([a-z0-9]{4}-){3}[a-z0-9]{12}")))`
+  - Both
+  - This rule will load balance apps who's App GUIDS begin with 0-8 to RIM1 and the remainder to RIM2 using the [matches](https://help.qlik.com/en-US/sense/April2018/Subsystems/ManagementConsole/Content/operator-matches.htm) regular expression operator.
+  - Note: This rule is for demo purposes. The expected distribution is expected to be normal over time but in smaller environments, this normality is not expected. Also note that the break even point for even distribution would be 0-7 / 8-9,a-z.
 
 ## Relevant documentation on Rules
 - [Resource Filters](https://help.qlik.com/en-US/sense/February2018/Subsystems/ManagementConsole/Content/available-resource-filters.htm)
